@@ -1,0 +1,41 @@
+
+
+1） 增加数据 
+        语法：insert into 表名(字段列表) values(值列表);
+        例如：insert into `stu`(name, sex, sno) values('张三', '男', 123);
+	      insert into `stu`(name, sex, sno) values('张三', '男', 123)，('李四', '男', 123); // 增加多条
+        注意：有些系统的dos不能插入中文 请 set names gbk;  然后再插入
+
+
+2） 删除数据
+        语法： delete from 表名 [where 条件]  // 条件可写可不写，如果不写，代表删除所有数据
+        例如： delete from stu where sex='女';
+
+
+3） 修改数据
+        语法： update 表名 set 字段1=新的值1, 字段2=新的值2 [where 条件]
+        例如： update stu set name='张三疯', sex='女' where id=5;
+
+
+4） 查询数据
+        语法： select 字段列表 from 表名 [where 条件]; // 如果字段列表写为 * 代表查询所有字段
+        例如： select * from stu;
+
+		select * from stu where number < 0; // 查询number子端小于0的数据
+		select * from stu where name LIKE "%三%"; // 模糊查询
+		select * from stu where name LIKE "%三%" order by id desc; // 根据id倒序排列
+	分页公式：
+    		select * from 表名 limit (currentPage - 1) * pageSize, pageSize;
+
+
+
+创建表
+	create table `commodity` (
+            	id int primary key auto_increment,
+            	name varchar(50),
+            	code varchar(50),
+		unit varchar(50),
+		price float(10,2),
+            	number bigint,
+		time date
+        );
