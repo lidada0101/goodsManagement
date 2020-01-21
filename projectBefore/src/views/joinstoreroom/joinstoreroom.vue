@@ -111,19 +111,19 @@
             }
           }).catch(e => {
             this.$message({
-              message: '请确认输入内容是否正确',
+              message: '网络错误',
               type: 'danger'
             })
           })
       } // 入库
     },
     mounted(){
+      let that = this
       let code = ''
-      window.addEventListener('keypress',e => {
+      window.addEventListener('keypress',function (e) {
         if(e.key !== 'Enter'){
           code += e.key
         }else{
-          console.log(code);
           let obj = {
             name: '',
             code: code,
@@ -132,7 +132,7 @@
             price: null,
             time: ''
           }
-          this.tableData.push(obj)
+          that.tableData.push(obj)
           code = ''
         }
       })

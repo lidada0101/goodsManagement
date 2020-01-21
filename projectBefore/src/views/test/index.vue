@@ -20,7 +20,7 @@ export default {
         that.code = that.code + e.key
         // that.code.push(e.key)
       }else{
-        console.log(that.code);
+        console.log('code:',that.code);
         that.code = ''
         return that.code
       }

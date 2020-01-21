@@ -9,8 +9,11 @@
     </div>
     <div class="table">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="名字">
+          <el-input v-model="formInline.name" placeholder="请输入名字" clearable></el-input>
+        </el-form-item>
         <el-form-item label="条形码">
-          <el-input v-model="formInline.code" placeholder="条形码" clearable></el-input>
+          <el-input v-model="formInline.code" placeholder="请输入条形码" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit()">查询</el-button>
@@ -53,20 +56,21 @@
           <li>数量</li>
           <li>价格</li>
           <li>时间</li>
+          <li>操作</li>
         </ul>
         <div class="table-content">
-          <ul class="table_wrap">
-            <li><el-input v-model="dialogtableData.name" placeholder="名字"></el-input></li>
-            <li><el-input v-model="dialogtableData.code" placeholder="条形码"></el-input></li>
-            <li><el-input v-model="dialogtableData.unit" placeholder="单位"></el-input></li>
-            <li><el-input v-model="dialogtableData.number" placeholder="数量"></el-input></li>
-            <li><el-input v-model="dialogtableData.price" placeholder="价格"></el-input></li>
-            <li><el-input v-model="dialogtableData.time" placeholder="时间"></el-input></li>
+          <ul class="table_wrap" v-for="(item, index) in dialogtableData" :key="index">
+            <li>{{item.name}}</li>
+            <li>{{item.code}}</li>
+            <li>{{item.unit}}</li>
+            <li class="number" :class="item.number <= 0 ? 'active' : ''">{{item.number}}</li>
+            <li>{{item.price}}</li>
+            <li>{{item.time}}</li>
+            <li><el-button type="success" @click="addnewtableData(item)">添加</el-button></li>
           </ul>
         </div>
         <div class="table-button">
-          <el-button type="info" @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="success" @click="addnewtableData()">添加</el-button>
+          <el-button type="info" @click="dialogFormVisible = false">关闭</el-button>
         </div>
       </div>
     </el-dialog>
@@ -81,10 +85,11 @@
         tableData: [], // 表格
         all: false, // 全选
         formInline: {
+          name: '',
           code: ''
         }, // 搜索条件
         dialogFormVisible: false, // 弹出框
-        dialogtableData: {}
+        dialogtableData: []
       }
     },
     methods: {
@@ -132,8 +137,10 @@
             this.dialogtableData = {}
             if (res.data.data.length) {
               this.dialogFormVisible = true
-              this.dialogtableData = res.data.data[0]
-              this.dialogtableData.time = this.cutTime(this.dialogtableData.time)
+              this.dialogtableData = res.data.data
+              this.dialogtableData.forEach(item => {
+                item.time = this.cutTime(item.time)
+              })
             } else {
               this.$message({
                 message: '暂无数据',
@@ -142,7 +149,7 @@
             }
           }).catch(e => {
             this.$message({
-              message: '请确认输入内容是否正确',
+              message: '网络错误',
               type: 'danger'
             })
           })
@@ -160,11 +167,11 @@
         }
         return `${year}-${month}-${day}`
       }, // 转换时间
-      addnewtableData () {
-        this.tableData.push(this.dialogtableData)
+      addnewtableData (val) {
+        this.tableData.push(val)
         this.dialogFormVisible = false
-        this.dialogtableData = {}
         this.formInline.code = ''
+        this.formInline.name = ''
       }, // 添加
       outstoreroom () {
         this.$ajax(api.outStoreroom,
@@ -187,7 +194,7 @@
             }
           }).catch(e => {
             this.$message({
-              message: '请确认输入内容是否正确',
+              message: '网络错误',
               type: 'danger'
             })
           })
@@ -195,21 +202,21 @@
     },
     computed: {
       total () {
-        let res = 0
+        let total = 0
         for (let key in this.tableData) {
-          res += this.tableData[key].price
+          let res = this.tableData[key].price * this.tableData[key].number
+          total += res
         }
-        return res
+        return total
       }
     },
     mounted(){
       let that = this
       let code = ''
-      window.addEventListener('keypress',e => {
+      window.addEventListener('keypress',function (e) {
         if(e.key !== 'Enter'){
           code += e.key
         }else{
-          console.log(code);
           that.formInline.code = code
           that.$ajax(api.getStoreroomOne,
           {
@@ -219,14 +226,18 @@
           ).then(res => {
             if (res.data.data.length) {
               let obj = res.data.data[0]
-              for (let key in that.tableData) {
-                if (that.tableData[key].code === obj.code) {
-                  that.tableData[key].number = that.tableData[key].number + obj.number
-                } else {
-                  that.tableData.push(obj)
+              if (that.tableData.length) {
+                for (let key in that.tableData) {
+                  if (that.tableData[key].code === obj.code) {
+                    that.tableData[key].number = that.tableData[key].number + obj.number
+                  } else {
+                    that.tableData.push(obj)
+                  }
                 }
+              } else {
+                that.tableData.push(obj)
               }
-              console.log(obj)
+              console.log(that.tableData)
             } else {
               that.$message({
                 message: '暂无数据',
@@ -264,6 +275,17 @@
     .el-button{
       width: 100px;
       font-weight: 600;
+    }
+  }
+  .table_wrap{
+    li{
+      .el-button{
+        top: 1px !important;
+        left: 30px !important;
+      }
+    }
+    .number.active{
+      color: red !important;
     }
   }
 }

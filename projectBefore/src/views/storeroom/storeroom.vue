@@ -10,10 +10,10 @@
     <div class="table">
       <el-form :inline="true" ref="formInline" :model="formInline" class="demo-form-inline">
         <el-form-item label="名字" prop="name">
-          <el-input v-model="formInline.name" placeholder="名字" clearable></el-input>
+          <el-input v-model="formInline.name" placeholder="请输入名字" clearable></el-input>
         </el-form-item>
         <el-form-item label="条形码" prop="code">
-          <el-input v-model="formInline.code" placeholder="条形码" clearable></el-input>
+          <el-input v-model="formInline.code" placeholder="请输入条形码" clearable></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="type">
           <el-select v-model="formInline.type" placeholder="全部">
@@ -97,7 +97,7 @@
         </div>
         <div class="table-button">
           <el-button type="info" @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="success" @click="redact()">添加</el-button>
+          <el-button type="success" @click="redact()">保存</el-button>
         </div>
       </div>
     </el-dialog>
@@ -175,7 +175,7 @@
             }
           }).catch(e => {
             this.$message({
-              message: '请确认输入内容是否正确',
+              message: '网络错误',
               type: 'danger'
             })
           })
@@ -213,7 +213,7 @@
             }
           }).catch(e => {
             this.$message({
-              message: '请确认输入内容是否正确',
+              message: '网络错误',
               type: 'danger'
             })
           })
