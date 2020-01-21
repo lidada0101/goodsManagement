@@ -18,18 +18,37 @@ router.all('*', (req, res, next) => {
 router.post('/getStoreroomOne', (req, res) => {
   // 接收所有数据
   let {
-    code
+    code,
+    name
   } = req.body;
   //准备sql
-  let sqlStr = `select * from commodity where code="${code}"`;
+  let sqlStr = `select * from commodity where 1=1`;
+  // 如果code为空 就查询所有
+  if (code !== '') {
+    sqlStr += ` and code LIKE "%${code}%"`
+  }
+  // 如果name为空 就查询所有
+  if (name !== '') {
+    sqlStr += ` and name LIKE "%${name}%"`
+  }
+  console.log(sqlStr)
   //    执行sql
   connection.query(sqlStr, (err, data) => {
     if (err) throw err;
-    res.send({
-      code: 0,
-      data: data,
-      msg: "查询成功"
-    });
+    console.log(data)
+    if (data.length) {
+      res.send({
+        code: 0,
+        data: data,
+        msg: "查询成功"
+      });
+    } else {
+      res.send({
+        code: 1,
+        data: data,
+        msg: "暂无数据"
+      });
+    }
   })
 });
 
