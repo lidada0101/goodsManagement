@@ -28,6 +28,9 @@
     		select * from 表名 limit (currentPage - 1) * pageSize, pageSize;
 
 
+创建库
+	CREATE DATABASE supermarket
+	
 
 创建表
 	create table `commodity` (
